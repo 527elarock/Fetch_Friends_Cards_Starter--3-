@@ -1,6 +1,6 @@
 // =============================================================
 // 2.03 Fetch + async/await: Friends Cards (STARTER)
-// This version loads friends.json with fetch().
+// This version loads friends.json with async/await.
 // =============================================================
 
 // Supplied page connections. Keep these IDs unchanged.
@@ -20,13 +20,13 @@ async function loadFriends() {
   try {
     const response = await fetch("friends.json");
 
+    // A 404 error does not automatically reject fetch(), so response.ok checks whether the request succeeded.
     if (!response.ok) {
       throw new Error(response.status);
     }
 
     const friends = await response.json();
     renderFriends(friends);
-
   } catch (error) {
     if (error instanceof SyntaxError) {
       showDataError(error);
