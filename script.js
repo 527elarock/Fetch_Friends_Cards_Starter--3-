@@ -11,29 +11,29 @@ const statusMessage = document.getElementById("status");
 loadButton.addEventListener("click", loadFriends);
 
 // -------------------------------------------------------------
-// loadFriends: CURRENT VERSION, uses fetch().
+// loadFriends: CURRENT VERSION, uses async/await.
 // -------------------------------------------------------------
-function loadFriends() {
+async function loadFriends() {
   statusMessage.classList.remove("error");
   statusMessage.textContent = "Loading friends...";
 
-  fetch("friends.json")
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error(response.status);
-      }
-      return response.json();
-    })
-    .then((friends) => {
-      renderFriends(friends);
-    })
-    .catch((error) => {
-      if (error instanceof SyntaxError) {
-        showDataError(error);
-      } else {
-        showLoadError();
-      }
-    });
+  try {
+    const response = await fetch("friends.json");
+
+    if (!response.ok) {
+      throw new Error(response.status);
+    }
+
+    const friends = await response.json();
+    renderFriends(friends);
+
+  } catch (error) {
+    if (error instanceof SyntaxError) {
+      showDataError(error);
+    } else {
+      showLoadError();
+    }
+  }
 }
 
 // -------------------------------------------------------------
