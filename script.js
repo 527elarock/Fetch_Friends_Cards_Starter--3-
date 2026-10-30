@@ -1,8 +1,6 @@
 // =============================================================
 // 2.03 Fetch + async/await: Friends Cards (STARTER)
-// This version loads friends.json with XMLHttpRequest, and it works.
-// Your job: convert loadFriends() to fetch (Checkpoint 2), then
-// to async/await (Checkpoint 3).
+// This version loads friends.json with fetch().
 // =============================================================
 
 // Supplied page connections. Keep these IDs unchanged.
@@ -13,38 +11,29 @@ const statusMessage = document.getElementById("status");
 loadButton.addEventListener("click", loadFriends);
 
 // -------------------------------------------------------------
-// loadFriends: CURRENT VERSION, uses XMLHttpRequest.
-// Checkpoints 2 and 3 replace this whole function.
+// loadFriends: CURRENT VERSION, uses fetch().
 // -------------------------------------------------------------
 function loadFriends() {
   statusMessage.classList.remove("error");
   statusMessage.textContent = "Loading friends...";
 
-  // 1. Create the XMLHttpRequest
-  const xhr = new XMLHttpRequest();
-
-  // 2. Open a GET request for friends.json
-  xhr.open("GET", "friends.json");
-
-  // 3. Handle the response when it loads
-  xhr.onload = function () {
-    if (xhr.status === 200) {
-      try {
-        const friends = JSON.parse(xhr.responseText);
-        renderFriends(friends);
-      } catch (error) {
-        showDataError(error);
+  fetch("friends.json")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(response.status);
       }
-    } else {
-      showLoadError();
-    }
-  };
-
-  // 4. Handle network errors
-  xhr.onerror = showLoadError;
-
-  // 5. Send the request
-  xhr.send();
+      return response.json();
+    })
+    .then((friends) => {
+      renderFriends(friends);
+    })
+    .catch((error) => {
+      if (error instanceof SyntaxError) {
+        showDataError(error);
+      } else {
+        showLoadError();
+      }
+    });
 }
 
 // -------------------------------------------------------------
